@@ -1,0 +1,24 @@
+sudo: required
+language: generic
+
+services:
+  - docker
+
+before_install:
+  - docker build -t sujila/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true sujila/react-test npm test
+
+after_success:
+  - docker build -t sujila/multi-client ./client
+  - docker build -t sujila/multi-nginx ./nginx
+  - docker build -t sujila/multi-server ./server
+  - docker build -t sujila/multi-worker ./worker
+  # Log in to the docker CLI
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # Take those images and push them to docker hub
+  - docker push sujila/multi-client
+  - docker push sujila/multi-nginx
+  - docker push sujila/multi-server
+  - docker push sujila/multi-worker
