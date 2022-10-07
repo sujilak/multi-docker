@@ -22,3 +22,15 @@ after_success:
   - docker push sujila/multi-nginx
   - docker push sujila/multi-server
   - docker push sujila/multi-worker
+
+deploy:
+  provider: elasticbeanstalk
+  region: 'us-east-1'
+  app: 'docker-multiple'
+  env: 'Dockermultiple-env'
+  bucket_name: 'elasticbeanstalk-us-east-1-260313274487'
+  bucket_path: 'docker-multi'
+  on:
+    branch: master
+  access_key_id: $AWS_ACCESS_KEY
+  secret_access_key: $AWS_SECRET_KEY
